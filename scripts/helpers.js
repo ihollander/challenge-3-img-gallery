@@ -1,4 +1,4 @@
-export const arrayToGrid = (array, rowSize) => {
+const arrayToGrid = (array, rowSize) => {
   return array.reduce((result, element, index) => {
     const row = index % rowSize;
     const col = (index - row) / rowSize;
@@ -9,3 +9,5 @@ export const arrayToGrid = (array, rowSize) => {
     return result;
   }, []);
 };
+
+export { arrayToGrid };

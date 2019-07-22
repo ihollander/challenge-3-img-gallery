@@ -1,62 +1,62 @@
 import adapter from "./api.js";
 import { arrayToGrid } from "./helpers.js";
 
-// DOM elements
-const searchForm = document.querySelector("#image-search");
-const photoContainer = document.querySelector("#photo-container");
-const imageTemplate = document.querySelector("#image-column");
+const app = (() => {
+  const searchForm = document.querySelector("#image-search");
+  const photoContainer = document.querySelector("#photo-container");
+  const imageTemplate = document.querySelector("#image-column");
 
-// handlers
-const handleSearchSubmit = e => {
-  e.preventDefault();
-  const search = e.target.elements["search"].value;
-  updateImages(search);
-};
-
-// event listerers
-searchForm.addEventListener("submit", handleSearchSubmit);
-
-// render methods
-const clearPhotos = () => {
-  while (photoContainer.firstChild) {
-    photoContainer.firstChild.remove();
-  }
-};
-
-const renderPhoto = (photo, parentNode) => {
-  const template = document.importNode(imageTemplate.content, true);
-
-  const img = template.querySelector("img");
-  img.src = photo.urls.regular;
-
-  parentNode.appendChild(template);
-};
-
-const renderPhotos = grid => {
-  grid.forEach(row => {
-    const columns = document.createElement("div");
-    columns.className = "columns";
-
-    row.forEach(photo => renderPhoto(photo, columns));
-
-    photoContainer.appendChild(columns);
+  searchForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const search = e.target.elements["search"].value;
+    updateImages(search);
   });
-};
 
-const updateImages = async search => {
-  clearPhotos();
-  try {
-    const photos = await adapter.getImages(search);
-    const grid = arrayToGrid(photos.results, 5);
-    renderPhotos(grid);
-  } catch (err) {
-    console.warn(err);
-  }
-};
+  const clearPhotos = () => {
+    while (photoContainer.firstChild) {
+      photoContainer.firstChild.remove();
+    }
+  };
 
-// initial render
-const init = () => {
-  updateImages("corgi");
-};
+  const renderPhoto = (photo, parentNode) => {
+    const template = document.importNode(imageTemplate.content, true);
 
-init();
+    const img = template.querySelector("img");
+    img.src = photo.urls.regular;
+
+    parentNode.appendChild(template);
+  };
+
+  const renderPhotos = grid => {
+    grid.forEach(row => {
+      const columns = document.createElement("div");
+      columns.className = "columns";
+
+      row.forEach(photo => renderPhoto(photo, columns));
+
+      photoContainer.appendChild(columns);
+    });
+  };
+
+  const updatePhotos = async search => {
+    clearPhotos();
+    try {
+      const photos = await adapter.getImages(search);
+      const grid = arrayToGrid(photos.results, 5);
+      renderPhotos(grid);
+    } catch (response) {
+      console.warn("Error in fetch", response);
+    }
+  };
+
+  // initial render
+  const init = () => {
+    updatePhotos("corgi");
+  };
+
+  return {
+    init
+  };
+})();
+
+app.init();
