@@ -9,7 +9,7 @@ const app = (() => {
   searchForm.addEventListener("submit", e => {
     e.preventDefault();
     const search = e.target.elements["search"].value;
-    updateImages(search);
+    updatePhotos(search);
   });
 
   const clearPhotos = () => {
